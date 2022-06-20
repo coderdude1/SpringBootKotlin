@@ -25,6 +25,9 @@ repositories {
 extra["snippetsDir"] = file("build/generated-snippets")
 extra["testcontainersVersion"] = "1.17.2"
 
+val kotestVersion = project.properties["kotestVersion"]
+val kotestSpringExtensionVersion = project.properties["kotestSpringExtensionVersion"]
+
 dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
 
@@ -50,13 +53,19 @@ dependencies {
 
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
-//    testImplementation 'io.kotest:kotest-runner-junit5:$version'
+    // Kotest
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-property:$kotestVersion")
+
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:mongodb")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:$kotestSpringExtensionVersion")
+
 }
 
 dependencyManagement {

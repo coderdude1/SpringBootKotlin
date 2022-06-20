@@ -34,6 +34,18 @@ Invalid Micrometer configuration detected:
 ```
 
 # Cool Stuff
+## Actuator
+https://www.baeldung.com/spring-boot-actuators
+
+## Basic Spring Boot
+* kotlin routers vs @Controllers and inject the handlers (more ratpacky)
+
+
+## Blocking IO
+Do some concurrent requests to show the way thread pool is used, confirm some basics loads and threads.
+
+Maybe configure the threadpool(s) smallish to experiment.
+
 ## Async IO
 
 ## ReactiveIO

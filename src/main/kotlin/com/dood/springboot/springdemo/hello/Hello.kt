@@ -34,11 +34,16 @@ class HelloService(val helloRepository: HelloRepository) {
 
 @Repository
 class HelloRepository {
+    var logger: Logger = LoggerFactory.getLogger(HelloRepository::class.java)
+
     fun getHellos(helloCount: Int) : String {
         val count = if(helloCount == 0) 1 else helloCount
         var retval = ""
         for(i in 1..count) {
-            retval += "hello<br>\n"
+            retval += "hello"
+            if(i < count) retval += "\n"
+            logger.info("retval")
+
         }
         return retval
     }
