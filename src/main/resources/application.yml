@@ -1,0 +1,8 @@
+management:
+  metrics:
+    export:
+      datadog:
+        enabled: false
+
+server:
+  port: 8088

@@ -12,6 +12,7 @@
 * I skipped all the cloud support options for now.  This is things for hystrix, external configuration management, service discovery, routing, etc
 * some options were not selectable, due to using spring boot 2.7 (several options require < 2.7m1)
 * I didn't see an option for swagger/swaggerUI/openAPI
+* The default kotlin coroutines lib is not imported, but the reactive coroutines lib is imported.
 
 ## Some neat things
 1. I selected the option for 'test-containers'
