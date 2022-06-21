@@ -27,6 +27,7 @@ extra["testcontainersVersion"] = "1.17.2"
 
 val kotestVersion = project.properties["kotestVersion"]
 val kotestSpringExtensionVersion = project.properties["kotestSpringExtensionVersion"]
+val kotlinVersion = project.properties.get("kotlinVersion")
 
 dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")

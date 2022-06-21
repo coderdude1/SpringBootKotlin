@@ -27,7 +27,10 @@ class HelloController(val helloService: HelloService) {
 
 @Service
 class HelloService(val helloRepository: HelloRepository) {
+    val logger: Logger = LoggerFactory.getLogger(HelloRepository::class.java)
+
     fun getHellos(helloCount: Int): String {
+        logger.info("calling repo with count of $helloCount")
         return helloRepository.getHellos(helloCount)
     }
 }
@@ -38,12 +41,13 @@ class HelloRepository {
 
     fun getHellos(helloCount: Int) : String {
         val count = if(helloCount == 0) 1 else helloCount
-        var retval = ""
-        for(i in 1..count) {
-            retval += "hello"
-            if(i < count) retval += "\n"
-            logger.info("retval")
+        var retval = "" //note intellij underlines 'var' to indicate it's a variable
 
+        for(currentLineNum in 1..count) {
+            retval += "hello"
+            if(currentLineNum < count)
+                retval += "\n"
+            logger.info("retval")
         }
         return retval
     }
