@@ -44,11 +44,14 @@ class HelloRepository {
         var retval = "" //note intellij underlines 'var' to indicate it's a variable
 
         for(currentLineNum in 1..count) {
-            retval += "hello"
+            retval += "hello ${currentLineNum}"
+
             if(currentLineNum < count)
                 retval += "\n"
-            logger.info("retval")
+
+            logger.info(retval)
         }
+
         return retval
     }
 }
