@@ -9,3 +9,7 @@ So some options (I think)
 1. annotate the test class with @SpringBootTest.  This may turn things into an int test, ie start up a spring boot instance.  ANSWER: yes this runs the whole tomcat/netty container
 2. create an analog to the @Components class above.  This might be better for simple unit tests where I inject stuff to test simple things.  https://github.com/kotest/kotest-examples-spring-webflux/blob/master/src/test/kotlin/io/kotest/example/spring/GreetingControllerTest.kt
 3. @Components and mocks?
+
+# CLI Load Testing 
+I used Apache ab (part of the http server tools) [install guides here](https://gist.github.com/yolossn/20d86c79745acbd97125b9cca950cbf7)
+

@@ -3,6 +3,9 @@ management:
     export:
       datadog:
         enabled: false
-
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 server:
   port: 8088

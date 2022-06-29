@@ -2,10 +2,12 @@ package com.dood.springboot.springdemo
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.scheduling.annotation.EnableAsync
 
 @SpringBootApplication
-class SpringdemoApplication
+@EnableAsync
+class SpringDemoAsyncApplication
 
 fun main(args: Array<String>) {
-    runApplication<SpringdemoApplication>(*args)
+    runApplication<SpringDemoAsyncApplication>(*args)
 }
