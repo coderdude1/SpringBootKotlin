@@ -164,5 +164,125 @@ Percentage of the requests served within a certain time (ms)
   99%   2205
  100%   2218 (longest request)
 ```
+## Tuning of the thread pool and observations.
+If the queue size is close to (I had one 2/3 the size) of the max pool size, it gets slow as it looks like requests get added to the queue instead of spanwning new threads.
+
+As an experiment I set the following
+```text
+corePoolSize= 5
+maxPoolSize=5
+queueCapacity=5
+```
+Using the same ab values as above, this SMOKED
+
+```text
+
+Document Path:          /async
+Document Length:        43 bytes
+
+Concurrency Level:      100
+Time taken for tests:   3.562 seconds
+Complete requests:      800
+Failed requests:        774
+   (Connect: 0, Receive: 0, Length: 774, Exceptions: 0)
+Non-2xx responses:      774
+Total transferred:      6180620 bytes
+HTML transferred:       6095892 bytes
+Requests per second:    224.62 [#/sec] (mean)
+Time per request:       445.195 [ms] (mean)
+Time per request:       4.452 [ms] (mean, across all concurrent requests)
+Transfer rate:          1694.69 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.5      0       2
+Processing:   201  259 163.5    211    1232
+Waiting:      201  257 162.5    211    1231
+Total:        202  259 163.4    212    1232
+
+Percentage of the requests served within a certain time (ms)
+  50%    212
+  66%    221
+  75%    230
+  80%    255
+  90%    345
+  95%    363
+  98%   1169
+  99%   1206
+ 100%   1232 (longest request)
+```
+using the same threadpool values, except for bumping max pool size to 150 results in this:
+```text
+Document Path:          /async
+Document Length:        43 bytes
+
+Concurrency Level:      100
+Time taken for tests:   6.965 seconds
+Complete requests:      800
+Failed requests:        0
+Total transferred:      140800 bytes
+HTML transferred:       34400 bytes
+Requests per second:    114.86 [#/sec] (mean)
+Time per request:       870.626 [ms] (mean)
+Time per request:       8.706 [ms] (mean, across all concurrent requests)
+Transfer rate:          19.74 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.5      0       2
+Processing:   701  716  47.1    705    1227
+Waiting:      701  714  46.2    704    1226
+Total:        701  716  47.0    705    1228
+
+Percentage of the requests served within a certain time (ms)
+  50%    705
+  66%    707
+  75%    708
+  80%    713
+  90%    753
+  95%    758
+  98%    769
+  99%    930
+ 100%   1228 (longest request)
+```
+
+I need to spin up a ton of different setups to understand this better, esp when you look at the percentage of requests served within a certain time vs requests per second.  Bumping the thread pool max to 15 withthe same configs results in an interesting result
+
+```text
+Document Path:          /async
+Document Length:        43 bytes
+
+Concurrency Level:      100
+Time taken for tests:   4.189 seconds
+Complete requests:      800
+Failed requests:        720
+   (Connect: 0, Receive: 0, Length: 720, Exceptions: 0)
+Non-2xx responses:      720
+Total transferred:      5762506 bytes
+HTML transferred:       5676266 bytes
+Requests per second:    190.99 [#/sec] (mean)
+Time per request:       523.576 [ms] (mean)
+Time per request:       5.236 [ms] (mean, across all concurrent requests)
+Transfer rate:          1343.51 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.5      0       3
+Processing:   203  320 214.0    223    1376
+Waiting:      203  318 213.0    222    1374
+Total:        203  321 214.0    223    1376
+
+Percentage of the requests served within a certain time (ms)
+  50%    223
+  66%    232
+  75%    365
+  80%    397
+  90%    702
+  95%    851
+  98%   1018
+  99%   1222
+ 100%   1376 (longest request)
+```
+
 ## TODO - Move the @Async from the Controller to a service
 to do this I will have to create a service with a method annotated with the @Async, and inject it into the controller.  I don't think this will work as I saw example code where people put the @Async annotation on the endpoint, but you never know.

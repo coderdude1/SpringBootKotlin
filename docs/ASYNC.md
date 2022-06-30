@@ -35,4 +35,7 @@ I used the apache server bench tool `ab` to simulate 100 concurrant clients, mak
 1. annotate a service method with `@Async` to see if I have to have the caller block? - NOPE.
 
 # Outstanding Questions
-1.  Since NIO is managing the incoming connections, and a blocking client calling a non-blocking endpoint, how does this impact the endpoint server?  The call is 'shelved' while the event loop is doing other things, but there is a limit on socket connections and such.
+1. Since NIO is managing the incoming connections, and a blocking client calling a non-blocking endpoint, how does this impact the endpoint server?  The call is 'shelved' while the event loop is doing other things, but there is a limit on socket connections and such.
+2. Configuring and tuning a thread pool.  I found if the `ThreadPoolTaskExecutor` is configured with a queue size close to (TODO figure out percentage, I did an experiment with the queue size 1/3 of the max pool and it was slow) or greater than the max pool size, requests get shuttled to the queue and no new task/worker threads get spun up.  Setting the queue size much lower causes it to spin new threads up.  What are the implications?
+3. How do I find the values of a running springboot instance for the threadpools?  According to the spring API docs for `ThreadPoolTaskExecutor` I should be able to see it (and tweek values) in JMX.  I did not find it in JConsole.
+4. Coroutines.  I think these will be far more performant than threads based on reading and dabbling.

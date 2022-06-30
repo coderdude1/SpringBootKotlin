@@ -25,7 +25,7 @@ tasks {
 
 # Spring Boot Modules
 ## Datadog
-I get an error on startup:
+I disabled datadog due to a error on startup.  I don't need it yet so will add it back later.:
 
 ```
 Invalid Micrometer configuration detected:
@@ -36,6 +36,13 @@ Invalid Micrometer configuration detected:
 # Cool Stuff
 ## Actuator
 https://www.baeldung.com/spring-boot-actuators
+Got working and wide open (no security)
+
+## Micrometer
+
+## Dockerfy things
+
+## add a mongo reactive db
 
 ## Basic Spring Boot
 * kotlin routers vs @Controllers and inject the handlers (more ratpacky)
