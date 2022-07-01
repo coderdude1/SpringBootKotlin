@@ -1,5 +1,6 @@
 package com.dood.springboot.springdemo.async
 
+import kotlinx.coroutines.delay
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Async
@@ -33,6 +34,14 @@ class AsyncController {
         sleep(500)
         logger.info("after sleep")
         return CompletableFuture.completedFuture("This is the async return completable future")
+    }
+
+    @GetMapping("/suspendable")
+    suspend fun getCoroutines() : String {
+        logger.info("in GET coroutine")
+        delay(500)
+        logger.info("after delay")
+        return "tada corutines"
     }
 
     @GetMapping("/not_async")

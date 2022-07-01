@@ -7,4 +7,7 @@ Added a custom thread pool and it scales, with some notes.
 
 Do the same tests in micronaut.
 
-I 
+## Using Coroutines with springboot
+I added a `suspend` to an endpoint def and it seems to work (look at the [Async doc in the coroutines section](./ASYNC.md))
+1. Define scopes for endpoints that are suspendable vs default (what is it?)
+2. structured concurrency?

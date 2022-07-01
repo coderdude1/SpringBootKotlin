@@ -31,6 +31,19 @@ I used the apache server bench tool `ab` to simulate 100 concurrant clients, mak
 
 [Check here for the results and thoughts](./ASYNC_VS_NONASYNC.md)
 
+# Coroutines
+I was able to do a suspendable endpoint by adding `suspend` to the controller endpoint and put a delay in it.  this appears to offload it to a coroutine.  I'm not sure which scope is used, I need to experiment more with this
+
+```text
+2022-06-30 22:13:43.835  INFO 47956 --- [nio-8088-exec-5] c.d.s.springdemo.async.FilterLogger      : start of servlet filter
+2022-06-30 22:13:44.036  INFO 47956 --- [nio-8088-exec-5] c.d.s.springdemo.async.FilterLogger      : filter awake now
+2022-06-30 22:13:44.036  INFO 47956 --- [nio-8088-exec-5] c.d.s.springdemo.async.AsyncController   : in GET coroutine
+2022-06-30 22:13:44.549  INFO 47956 --- [DefaultExecutor] c.d.s.springdemo.async.AsyncController   : after delay
+```
+Note the 'DefaultExecutor' thread which is the suspendable function _after_ the delay in the controller
+
+I need to understand scopes better, as there are rules on if a child suspendable function breaks/throws an exception and how it affects parents/etc, ie structured concurrency
+
 # Some future experiments
 1. annotate a service method with `@Async` to see if I have to have the caller block? - NOPE.
 
@@ -39,3 +52,15 @@ I used the apache server bench tool `ab` to simulate 100 concurrant clients, mak
 2. Configuring and tuning a thread pool.  I found if the `ThreadPoolTaskExecutor` is configured with a queue size close to (TODO figure out percentage, I did an experiment with the queue size 1/3 of the max pool and it was slow) or greater than the max pool size, requests get shuttled to the queue and no new task/worker threads get spun up.  Setting the queue size much lower causes it to spin new threads up.  What are the implications?
 3. How do I find the values of a running springboot instance for the threadpools?  According to the spring API docs for `ThreadPoolTaskExecutor` I should be able to see it (and tweek values) in JMX.  I did not find it in JConsole.
 4. Coroutines.  I think these will be far more performant than threads based on reading and dabbling.
+
+# Reading Material
+https://www.quinbay.com/blog/working-with-threadpooltaskexecutor-of-spring#:~:text=One%20of%20the%20added%20Advantage,is%20roughly%20equivalent%20to%20Executors.
+
+There is some talk about the when using the TaskExecutor manually your task is added to the queue and it's internal rules determine when it gets a thread.  #33.2
+https://docs.spring.io/spring-framework/docs/4.2.x/spring-framework-reference/html/scheduling.html
+
+Async with kotlin/coroutines.  also has examples of using a `router` vs a `@Controller`.  Looks like it assumes reactive tho, not just non-blocking/async
+https://foojay.io/today/build-and-test-non-blocking-web-applications-with-spring-webflux-kotlin-and-coroutines/
+
+This one may be worth looking at more.  It seems to have a lot of extra coroutine (ie continuations) but worth looking at
+https://resources.jetbrains.com/storage/products/kotlinconf2017/slides/AsynchronousProgramming.pdf
