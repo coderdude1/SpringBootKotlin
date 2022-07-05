@@ -32,7 +32,11 @@ I used the apache server bench tool `ab` to simulate 100 concurrant clients, mak
 [Check here for the results and thoughts](./ASYNC_VS_NONASYNC.md)
 
 # Coroutines
-I was able to do a suspendable endpoint by adding `suspend` to the controller endpoint and put a delay in it.  this appears to offload it to a coroutine.  I'm not sure which scope is used, I need to experiment more with this
+`/suspendable` endpoint implements this
+
+I was able to do a suspendable endpoint by adding `suspend` to the controller endpoint and put a delay in it.  this appears to offload it to a coroutine.  I'm not sure which scope is used, I need to experiment more with this.  The endpoint
+
+I did this experiment before finding the [spring doc on coroutines](https://docs.spring.io/spring-framework/docs/5.2.0.RELEASE/spring-framework-reference/languages.html#how-reactive-translates-to-coroutines).  Defining the function `suspend` implicitly returns a `Mono` so it **reactive!** vs just non-blocking.  Note the first log statement is on the request thread, after the delay it is on a different thread.
 
 ```text
 2022-06-30 22:13:43.835  INFO 47956 --- [nio-8088-exec-5] c.d.s.springdemo.async.FilterLogger      : start of servlet filter
@@ -44,8 +48,17 @@ Note the 'DefaultExecutor' thread which is the suspendable function _after_ the 
 
 I need to understand scopes better, as there are rules on if a child suspendable function breaks/throws an exception and how it affects parents/etc, ie structured concurrency
 
+## Specifying a Scope on an endponit
+`suspendableScoped` endpoint specifies a suspendable function that uses the GlobalScope scope.  Holy crap this bencmarks _**FAST**_ handling 363 requests per second!
+
+Notice the calls _start_ in a differnt thread pool vs just using the `susppend` on a function (the first log was the request thread, the 2nd after the delay was on a different thread)
+
+```text
+2022-07-04 23:01:04.811  INFO 42160 --- [atcher-worker-1] c.d.s.springdemo.async.AsyncController   : in GlobalScope.async handler
+2022-07-04 23:01:04.839  INFO 42160 --- [atcher-worker-1] c.d.s.springdemo.async.AsyncController   : after delay
+```
 # Some future experiments
-1. annotate a service method with `@Async` to see if I have to have the caller block? - NOPE.
+1. annotate a service method with `@Async` to see if I have to have the caller block? - **NOPE**.
 
 # Outstanding Questions
 1. Since NIO is managing the incoming connections, and a blocking client calling a non-blocking endpoint, how does this impact the endpoint server?  The call is 'shelved' while the event loop is doing other things, but there is a limit on socket connections and such.

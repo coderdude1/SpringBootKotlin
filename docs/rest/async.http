@@ -6,3 +6,6 @@ GET http://127.0.0.1:8088/not_async
 ### Suspendable Endpoint
 GET http://127.0.0.1:8088/suspendable
 
+### Async endpoint
+GET http://127.0.0.1:8088/suspendableScoped
+

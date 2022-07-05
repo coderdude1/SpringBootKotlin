@@ -1,5 +1,7 @@
 package com.dood.springboot.springdemo.async
 
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -36,13 +38,27 @@ class AsyncController {
         return CompletableFuture.completedFuture("This is the async return completable future")
     }
 
+    /**
+     * Doing the `suspend` on a springboot controller implies it returns a Mono
+     * https://docs.spring.io/spring-framework/docs/5.2.0.RELEASE/spring-framework-reference/languages.html#how-reactive-translates-to-coroutines
+     * `fun handler(): Mono<Void> becomes suspend fun handler()`
+     */
     @GetMapping("/suspendable")
     suspend fun getCoroutines() : String {
         logger.info("in GET coroutine")
         delay(500)
         logger.info("after delay")
-        return "tada corutines"
+        return "tada coroutines"
     }
+
+    @GetMapping("/suspendableScoped")
+    fun globalScopedAsync() = GlobalScope.async {//DelicateApi warning TODO fix this
+        logger.info("in GlobalScope.async handler")
+        delay(10)
+        logger.info("after delay")
+        "suspended in GlobalScope" //error when adding return due to `async`
+    }
+
 
     @GetMapping("/not_async")
     fun getNotAsync() : String {

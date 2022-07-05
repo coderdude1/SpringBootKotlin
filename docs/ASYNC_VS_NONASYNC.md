@@ -284,5 +284,41 @@ Percentage of the requests served within a certain time (ms)
  100%   1376 (longest request)
 ```
 
+Using a suspendable function that is assigned to the GlobalScope context
+
+```text
+Document Path:          /suspendableScoped
+Document Length:        24 bytes
+
+Concurrency Level:      100
+Time taken for tests:   2.201 seconds
+Complete requests:      800
+Failed requests:        0
+Total transferred:      125600 bytes
+HTML transferred:       19200 bytes
+Requests per second:    363.44 [#/sec] (mean)
+Time per request:       275.152 [ms] (mean)
+Time per request:       2.752 [ms] (mean, across all concurrent requests)
+Transfer rate:          55.72 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.5      0       3
+Processing:   215  236  15.1    232     290
+Waiting:      212  232  12.1    229     276
+Total:        215  237  15.1    232     290
+
+Percentage of the requests served within a certain time (ms)
+  50%    232
+  66%    234
+  75%    236
+  80%    239
+  90%    255
+  95%    275
+  98%    285
+  99%    288
+ 100%    290 (longest request)
+```
+
 ## TODO - Move the @Async from the Controller to a service
 to do this I will have to create a service with a method annotated with the @Async, and inject it into the controller.  I don't think this will work as I saw example code where people put the @Async annotation on the endpoint, but you never know.
