@@ -8,7 +8,7 @@ import java.util.concurrent.Executor
 
 @Configuration
 @EnableAsync
-class AppConfig : AsyncConfigurer { //note there is an exception handler method that can be overridden
+class SpringAsyncConfig : AsyncConfigurer { //note there is an exception handler method that can be overridden
     /**
      * Some notes and observations
      * 1.  Setting the queue size too high (close or greater than max pool size) results in the thread pool

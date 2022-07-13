@@ -1,10 +1,12 @@
 package com.dood.springboot.springdemo.async
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,7 +23,7 @@ import javax.servlet.ServletResponse
  */
 
 @RestController()
-class AsyncController {
+class AsyncController(@Autowired private val ioScope: CoroutineScope) {
     val logger: Logger = LoggerFactory.getLogger(AsyncController::class.java)
 
     /**
@@ -51,12 +53,30 @@ class AsyncController {
         return "tada coroutines"
     }
 
-    @GetMapping("/suspendableScoped")
+    /**
+     * Using GlobalScope usually isn't a good idea, as it isn't implementing structured concurrancy, which
+     * can result in coroutine leaks, ie if multiple coroutines are in flight for a request, one throws
+     * an exception the others will still execute, and can possibly be orpaned (if the endpoint returns due to
+     * the exception.  Having said this the spring docs use GlobalScope in examples.
+     * https://docs.spring.io/spring-framework/docs/5.2.0.RELEASE/spring-framework-reference/languages.html#controllers
+     *
+     * [This article](https://betterprogramming.pub/how-to-fire-and-forget-kotlin-coroutines-in-spring-boot-40f8204aac86)
+     * has some good points on when to use what scope (at the conclusion section)
+     */
+    @GetMapping("/suspendableGlobalScoped")
     fun globalScopedAsync() = GlobalScope.async {//DelicateApi warning TODO fix this
         logger.info("in GlobalScope.async handler")
         delay(10)
         logger.info("after delay")
-        "suspended in GlobalScope" //error when adding return due to `async`
+        "suspended in GlobalScope" //error when adding return due to `async`, this is the returned value
+    }
+
+    @GetMapping("/suspendableIoScoped")
+    fun globalIoScopedAsync() = ioScope.async {
+        logger.info("in ioScope.async handler")
+        delay(10)
+        logger.info("after delay")
+        "suspended in ioScope" //error when adding return due to `async` this is the return value tho
     }
 
 
